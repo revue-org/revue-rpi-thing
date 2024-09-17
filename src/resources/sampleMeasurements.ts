@@ -7,7 +7,7 @@ const { read } = node_dht
 
 function getDHTMeasurment(): Promise<{ temp: number, hum: number }> {
   return new Promise((resolver, rejector) => {
-    read(11, parseInt(DHT_SENSOR_PIN!!), function (err: any, temperature: any, humidity: any) {
+    read(11, DHT_SENSOR_PIN, function (err: any, temperature: any, humidity: any) {
       if (!err) {
         resolver({
           "temp": temperature,
@@ -16,8 +16,8 @@ function getDHTMeasurment(): Promise<{ temp: number, hum: number }> {
       } else {
         console.error(err);
         resolver({
-          "temp": "0.0",
-          "hum": "0.0"
+          "temp": 0.0,
+          "hum": 0.0
         })
       }
     });

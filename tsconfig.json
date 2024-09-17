@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "baseUrl": ".",
     /* Visit https://aka.ms/tsconfig to read more about this file */
-    "composite": true,
+    /*"composite": true,*/
     "target": "ESNext",
     "lib": [
       "es6"
@@ -13,7 +13,8 @@
     "moduleResolution": "Node",
     "paths": {
       "@/*": [
-        "./src/*"
+        "./src/*",
+        "capabilities.json"
       ]
     },
     "resolveJsonModule": true,

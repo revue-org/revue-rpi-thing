@@ -1,6 +1,6 @@
 import KafkaProducer from '@/handler/events/KafkaProducer.js'
 import { MEDIA_SERVER_HOST, MEDIA_SERVER_RTSP_PORT, THING_ID, thingService } from '@/index.js'
-import { SensoringCapability } from '@/core/domain/Capability.js'
+import { CapabilityType, MeasureType, SensoringCapability } from '@/core/domain/Capability.js'
 import {
   humidityMeasurement,
   pressureMeasurement,
@@ -14,30 +14,40 @@ import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg'
 import ffmpegInstaller from '@ffmpeg-installer/ffmpeg'
 
 class Simulation {
-  private interval: any
   private ffmpegProcess: FfmpegCommand = ffmpeg()
+  private intervals: any[] = []
+
+
+  private async getMeasureByType(type: MeasureType) {
+    if (type == MeasureType.TEMPERATURE) {
+      return await temperatureMeasurement()
+    } else if (type == MeasureType.HUMIDITY) {
+      return await humidityMeasurement()
+    } else {
+      return pressureMeasurement()
+    }
+  }
 
   public start = async (producer: KafkaProducer): Promise<void> => {
     console.log('Simulation started')
-    this.interval = setInterval(
-      async (): Promise<void> => {
-        const temperature = await temperatureMeasurement()
-        const humidity = await humidityMeasurement()
-        console.log(temperature)
-        console.log(humidity)
-        producer.produce(`measurements.${thingService.getId()}`, temperature)
-        producer.produce(`measurements.${thingService.getId()}`, humidity)
-        producer.produce(`measurements.${thingService.getId()}`, pressureMeasurement())
-      },
-      (thingService.getState().capabilities[0] as SensoringCapability).capturingInterval
-    )
-    console.log('Event: Measurements are being produced every 2.5s (capturingInterval)')
-
-    await this.produceVideo()
+    thingService.getState().capabilities.forEach(capability => {
+      if (capability.type == CapabilityType.SENSOR) {
+        const interval = setInterval(
+          async (): Promise<void> => {
+            producer.produce(`measurements.${thingService.getId()}`, this.getMeasureByType(capability.measure.type))
+          }, capability.capturingInterval)
+        this.intervals.push(interval);
+        console.log(`Event: ${capability.measure.type} measurements are being produced every ${capability.capturingInterval / 1000}s`)
+      } else if (capability.type == CapabilityType.VIDEO) {
+        this.produceVideo()
+      }
+    });
   }
 
   public stop = (): void => {
-    clearInterval(this.interval)
+    this.intervals.forEach(interval => {
+      clearInterval(interval)
+    })
     this.ffmpegProcess.kill('SIGINT')
   }
 
