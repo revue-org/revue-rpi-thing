@@ -15,15 +15,26 @@
 
 ### Configure the thing capability file
 
+*src/capabilities.json*
+
 ```json
 {
-  "DHT_PIN": 23,
-  "capabilities": {
-    "temperature": true,
-    "humidity": true,
-    "video": false,
-    "pressure": false
-  }
+    "DHT_PIN": 23,
+    "capabilities": {
+        "temperature": {
+            "enabled": true,
+            "interval": 700
+        },
+        "humidity": {
+            "enabled": true,
+            "interval": 700
+        },
+        "pressure": {
+            "enabled": false,
+            "interval": 2500
+        },
+        "video": true
+    }
 }
 ```
 
