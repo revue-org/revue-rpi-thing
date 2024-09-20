@@ -3,16 +3,16 @@
     "capabilities": {
         "temperature": {
             "enabled": true,
-            "interval": 2500
+            "interval": 700
         },
         "humidity": {
             "enabled": true,
-            "interval": 2500
+            "interval": 700
         },
         "pressure": {
             "enabled": false,
             "interval": 2500
         },
-        "video": false
+        "video": true
     }
 }
