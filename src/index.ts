@@ -6,6 +6,10 @@ import { statusHandler } from '@/handler/properties/status.js'
 import { validation } from '@/utils/middleware.js'
 import { initialState } from '@/resources/initialState.js'
 import { ThingService } from '@/core/application/ThingService.js'
+import dotenv from 'dotenv'
+import thingConfig from '@/capabilities.json' with { type: "json" }
+
+dotenv.config()
 
 const Server = HttpServer.HttpServer
 
@@ -14,12 +18,15 @@ export const THING_PORT = process.env.THING_PORT
 export const THING_LOCATION = process.env.THING_LOCATION
 export const MEDIA_SERVER_HOST = process.env.MEDIA_SERVER_HOST
 export const MEDIA_SERVER_RTSP_PORT = process.env.MEDIA_SERVER_RTSP_PORT
+export const DHT_SENSOR_PIN = thingConfig.DHT_PIN
+
 if (
   THING_ID === undefined ||
   THING_PORT === undefined ||
   THING_LOCATION === undefined ||
   MEDIA_SERVER_HOST === undefined ||
-  MEDIA_SERVER_RTSP_PORT === undefined
+  MEDIA_SERVER_RTSP_PORT === undefined ||
+  DHT_SENSOR_PIN === undefined
 ) {
   console.log('Thing configuration not provided')
   process.exit(1)
@@ -45,3 +52,8 @@ servient.start().then(async (WoT: any): Promise<void> => {
   console.log('Thing exposed successfully')
   await thingService.enable()
 })
+
+
+
+
+

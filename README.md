@@ -1,10 +1,31 @@
-# Sample Thing for Revue
+# Raspberry PI Revue Thing
 
 ## Prerequisites
 
+### Software
+
 - [Docker](https://docker.com)
 
+### Hardware
+
+- [DHT11 sensor]() if you want to enable temperature and/or humidity measurements
+- [RPi camera]() if you want to enable video streaming capability
+
 ## Getting Started
+
+### Configure the thing capability file
+
+```json
+{
+  "DHT_PIN": 23,
+  "capabilities": {
+    "temperature": true,
+    "humidity": true,
+    "video": false,
+    "pressure": false
+  }
+}
+```
 
 To set up a new thing in Revue, you can just run the following command
 
